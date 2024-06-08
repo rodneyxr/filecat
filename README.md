@@ -20,8 +20,7 @@ The challenge of managing and providing context to LLMs when dealing with extens
 ## Installation
 
 ```bash
-go get github.com/rodneyxr/filecat
-go install github.com/rodneyxr/filecat
+go install github.com/rodneyxr/filecat/v2@latest
 ```
 
 Add the Go bin directory to your system's PATH environment variable to access the `filecat` command from anywhere.

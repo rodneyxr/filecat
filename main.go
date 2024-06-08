@@ -42,12 +42,12 @@ var runCmd = &cobra.Command{
 		}
 
 		// If ignoring extensionless files, ensure "" is in excludeExts
-		if ignoreExtensionless && !containsAny(excludeExts, "") {
+		if ignoreExtensionless && !containsExact(excludeExts, "") {
 			excludeExts = append(excludeExts, "")
 		}
 
 		// If including extensionless files, ensure "" is in includeExts (and takes precedence over excludeExts)
-		if includeExtensionless && !containsAny(includeExts, "") {
+		if includeExtensionless && !containsExact(includeExts, "") {
 			includeExts = append(includeExts, "")
 		}
 
@@ -57,7 +57,7 @@ var runCmd = &cobra.Command{
 			}
 
 			// Skip excluded directories
-			if d.IsDir() && containsAny(excludeDirs, d.Name()) {
+			if d.IsDir() && containsExact(excludeDirs, d.Name()) {
 				return fs.SkipDir
 			}
 
@@ -67,9 +67,9 @@ var runCmd = &cobra.Command{
 				ext := strings.TrimPrefix(filepath.Ext(path), ".")
 
 				// Check if the file matches the inclusion/exclusion criteria
-				includeDir := len(includeDirs) == 0 || containsAny(includeDirs, filepath.Dir(path))
-				includeExt := len(includeExts) == 0 || containsAny(includeExts, ext)
-				excludeExt := len(excludeExts) > 0 && containsAny(excludeExts, ext)
+				includeDir := len(includeDirs) == 0 || containsExact(includeDirs, filepath.Dir(path))
+				includeExt := len(includeExts) == 0 || containsExact(includeExts, ext)
+				excludeExt := len(excludeExts) > 0 && containsExact(excludeExts, ext)
 
 				if includeDir && includeExt && !excludeExt {
 					content, err := os.ReadFile(path)
@@ -100,10 +100,10 @@ func init() {
 	runCmd.Flags().BoolVarP(&includeExtensionless, "include-extensionless", "I", false, "Include files without extensions")
 }
 
-// containsAny checks if a slice contains any of the strings in a given item
-func containsAny(slice []string, item string) bool {
-	for _, s := range slice {
-		if strings.Contains(item, s) {
+// containsExact checks if a slice contains an exact string match
+func containsExact(slice []string, item string) bool {
+	for _, a := range slice {
+		if a == item {
 			return true
 		}
 	}
